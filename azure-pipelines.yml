@@ -1,0 +1,33 @@
+trigger:
+- main
+
+pool: Default
+
+stages:
+  - stage: dev
+    jobs:
+      - job : deploy
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.5.0' 
+          
+          - task: TerraformTaskV3@3
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'Azure subscription 1(97d62e53-6132-48c5-a9be-83072204c44c)'
+              backendAzureRmResourceGroupName: 'samplegroup'
+              backendAzureRmStorageAccountName: 'bharathstg'
+              backendAzureRmContainerName: 'bharathcontainer'
+              backendAzureRmKey: 'terraform.tfstate'
+          - task: TerraformTaskV3@3
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              environmentServiceNameAzureRM: 'Azure subscription 1(97d62e53-6132-48c5-a9be-83072204c44c)'
+          - task: TerraformTaskV3@3
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              environmentServiceNameAzureRM: 'Azure subscription 1(97d62e53-6132-48c5-a9be-83072204c44c)'
